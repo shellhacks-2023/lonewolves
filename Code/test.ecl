@@ -102,18 +102,18 @@ OUTPUT(OuterMap);*/
     ParadiseScore:=SELF.ParadiseScore+Le.StudentTeacherScore;
  SELF := Le;
 END;*/
+//OUTPUT('Hello world');
+//OUTPUT(iParadiseInterface.Student_Teacher_Ratio);
+//MyInstance:=iParadiseInterface.Student_Teacher_Ratio;
 CombLayout CompTotal(CombLayout Le) := TRANSFORM
-    SELF.ParadiseScore := 0;
+    
    // SELF.printHello := '';
-    IF iParadiseInterface.Student_Teacher_Ratio THEN
-        //OUTPUT('Hello');
-        //PrintHello := 'Hello';
-        ParadiseScore :=SELF.ParadiseScore+Le.StudentTeacherScore;
-    ELSE 
-        ParadiseScore:=0;
-    END;
-    //OUTPUT(LEFT, NAMED('TransformedDataset'));
-SELF := Le;
+    score:=IF (iParadiseInterface.Student_Teacher_Ratio=TRUE,Le.StudentTeacherScore,0);
+    //score:=IF (MyInstance=TRUE,Le.StudentTeacherScore,0);
+    //SELF.ParadiseScore:=Le.StudentTeacherScore;
+    SELF.ParadiseScore:=score;
+    SELF := Le;
+    
 
 END;
 
