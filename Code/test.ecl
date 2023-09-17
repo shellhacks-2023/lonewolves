@@ -1,10 +1,14 @@
 IMPORT $;
-WeatherDS  := $.File_Composite.WeatherScoreDS;
-CrimeDS    := $.File_Composite.CrimeScoreDS;
-EdDS       := $.File_Composite.EduScoreDS;
-HealthDS   := $.File_Composite.MortScoreDS;
+WeatherDS := $.File_Composite.WeatherScoreDS;
+CrimeDS := $.File_Composite.CrimeScoreDS;
+EdDS := $.File_Composite.EduScoreDS;
+HealthDS := $.File_Composite.MortScoreDS;
 CombLayout := $.File_Composite.Layout;
 iParadiseInterface:=$.iParadise;
+
+
+
+
 
 
 
@@ -12,21 +16,24 @@ iParadiseInterface:=$.iParadise;
 MergeWeather := PROJECT(WeatherDS,TRANSFORM(CombLayout,SELF.StateName := $.DCT.MapST2Name(LEFT.State),SELF := LEFT,SELF := []));
 //OUTPUT(MergeWeather,NAMED('AddStateToWeather'));
 
+
 // ViolentCompRat;
 // PropCompRat;
 // ViolentScore;
 // PropCrimeScore;
 MergeCrime := JOIN(MergeWeather,CrimeDS,
-                   LEFT.State = Right.State,
-                   TRANSFORM(CombLayout,
-                             SELF.ViolentCompRat := RIGHT.ViolentCompRat,
-                             SELF.PropCompRat    := RIGHT.PropCompRat,
-                             SELF.ViolentScore   := RIGHT.ViolentScore,
-                             SELF.PropCrimeScore := RIGHT.PropCrimeScore,
-                             SELF := LEFT),LOOKUP);
+LEFT.State = Right.State,
+TRANSFORM(CombLayout,
+SELF.ViolentCompRat := RIGHT.ViolentCompRat,
+SELF.PropCompRat := RIGHT.PropCompRat,
+SELF.ViolentScore := RIGHT.ViolentScore,
+SELF.PropCrimeScore := RIGHT.PropCrimeScore,
+SELF := LEFT),LOOKUP);
+
 
 //OUTPUT(iParadiseInterface.Public_School_Count+' Hello');
 //OUTPUT(MergeCrime,NAMED('CrimeandWeather'));
+
 
 // pubcnt;
 // prvcnt;
@@ -35,90 +42,105 @@ MergeCrime := JOIN(MergeWeather,CrimeDS,
 // PrvSchoolScore;
 // PublicSchoolScore;
 MergeEducation := JOIN(MergeCrime,EdDS,
-                       LEFT.State = Right.State,
-                       TRANSFORM(CombLayout,
-                                 SELF.pubcnt              := RIGHT.pubcnt,
-                                 SELF.prvcnt              := RIGHT.prvcnt,
-                                 SELF.avestratio          := RIGHT.avestratio,
-                                 SELF.StudentTeacherScore := RIGHT.StudentTeacherScore,
-                                 SELF.PrvSchoolScore      := RIGHT.PrvSchoolScore,
-                                 SELF.PublicSchoolScore   := RIGHT.PublicSchoolScore,
-                                 SELF := LEFT),LOOKUP);
+LEFT.State = Right.State,
+TRANSFORM(CombLayout,
+SELF.pubcnt := RIGHT.pubcnt,
+SELF.prvcnt := RIGHT.prvcnt,
+SELF.avestratio := RIGHT.avestratio,
+SELF.StudentTeacherScore := RIGHT.StudentTeacherScore,
+SELF.PrvSchoolScore := RIGHT.PrvSchoolScore,
+SELF.PublicSchoolScore := RIGHT.PublicSchoolScore,
+SELF := LEFT),LOOKUP);
 //OUTPUT(MergeEducation,NAMED('CrimeWeatherEducation'));
+
 
 // sumcum;
 // maxcum;
 // mincum;
 // MortalityScore;
 MergeAll := JOIN(MergeEducation,HealthDS,
-                    LEFT.State = Right.State,
-                    TRANSFORM(CombLayout,
-                    SELF.sumcum := RIGHT.sumcum,
-                    SELF.maxcum := RIGHT.maxcum,
-                    SELF.mincum := RIGHT.mincum,
-                    SELF.MortalityScore := RIGHT.MortalityScore,
-                    SELF := LEFT),LOOKUP);
+LEFT.State = Right.State,
+TRANSFORM(CombLayout,
+SELF.sumcum := RIGHT.sumcum,
+SELF.maxcum := RIGHT.maxcum,
+SELF.mincum := RIGHT.mincum,
+SELF.MortalityScore := RIGHT.MortalityScore,
+SELF := LEFT),LOOKUP);
+
 
 // Define a map structure
 /*MyMap := DATASET([
-  {1, 'Alice'},
-  {2, 'Bob'},
-  {3, 'Charlie'}
+{1, 'Alice'},
+{2, 'Bob'},
+{3, 'Charlie'}
 ], {INTEGER1 Id, STRING Name});
 */
 //MyMap:=DATASET([{1,DATASET([{101,'ALice'},{102,'Bob'}],{DECIMAL5_2 rollNumber,STRING name})}],{DECIMAL5_2 id,DATASET dd});
 /*InnerMapRec := RECORD
-    STRING State;
-    INTEGER score;
+STRING State;
+INTEGER score;
 END;
+
 
 // Define the structure of the outer map with keys as INT and values as InnerMapRec
 OuterMapRec := RECORD
-    STRING particularScore;
-    DATASET(InnerMapRec) Value;
+STRING particularScore;
+DATASET(InnerMapRec) Value;
 END;
+
 
 // Create an instance of the inner map
 InnerMap := DATASET([
-    {'TX', 25},
-    {'FL', 30},
-    {'CA', 35}
+{'TX', 25},
+{'FL', 30},
+{'CA', 35}
 ], InnerMapRec);
+
 
 // Create an instance of the outer map and populate it
 OuterMap := DATASET([
-    {'eventScore', InnerMap},
-    {'violentScore', DATASET([{'NY', 40}], InnerMapRec)}
+{'eventScore', InnerMap},
+{'violentScore', DATASET([{'NY', 40}], InnerMapRec)}
 ], OuterMapRec);
 OUTPUT(OuterMap);*/
 //OUTPUT(iParadiseInterface.Student_Teacher_Ratio);
 //OUTPUT(MyMap);
 
+
 //CombLayout CompTotal(CombLayout Le) := TRANSFORM
- /*SELF.ParadiseScore := Le.StudentTeacherScore + Le.PrvSchoolScore + Le.PublicSchoolScore + Le.ViolentScore + Le.PropCrimeScore +
-                       Le.MortalityScore + Le.EvtScore + Le.InjScore + Le.FatScore;*/
-    /*SELF.ParadiseScore:=0;
-    IF iParadiseInterface.Student_Teacher_Ratio THEN
-    ParadiseScore:=SELF.ParadiseScore+Le.StudentTeacherScore;
- SELF := Le;
+/*SELF.ParadiseScore := Le.StudentTeacherScore + Le.PrvSchoolScore + Le.PublicSchoolScore + Le.ViolentScore + Le.PropCrimeScore +
+Le.MortalityScore + Le.EvtScore + Le.InjScore + Le.FatScore;*/
+/*SELF.ParadiseScore:=0;
+IF iParadiseInterface.Student_Teacher_Ratio THEN
+ParadiseScore:=SELF.ParadiseScore+Le.StudentTeacherScore;
+SELF := Le;
 END;*/
 //OUTPUT('Hello world');
 //OUTPUT(iParadiseInterface.Student_Teacher_Ratio);
 //MyInstance:=iParadiseInterface.Student_Teacher_Ratio;
 CombLayout CompTotal(CombLayout Le) := TRANSFORM
-    
-   // SELF.printHello := '';
-    score:=IF (iParadiseInterface.Student_Teacher_Ratio=TRUE,Le.StudentTeacherScore,0);
-    //score:=IF (MyInstance=TRUE,Le.StudentTeacherScore,0);
-    //SELF.ParadiseScore:=Le.StudentTeacherScore;
-    SELF.ParadiseScore:=score;
-    SELF := Le;
-    
+// SELF.printHello := '';
+score1:=IF (iParadiseInterface.Student_Teacher_Ratio=TRUE,Le.StudentTeacherScore,0);
+score2:=IF(iParadiseInterface.Public_School_Count=TRUE,Le.PublicSchoolScore,0);
+score3:=IF(iParadiseInterface.Violent_Crimes=TRUE,Le.ViolentCompRat,0);
+score4:=IF(iParadiseInterface.Property_Crimes=TRUE,Le.PropCompRat,0);
+score5:=IF(iParadiseInterface.Private_School_Count=TRUE,Le.PrvSchoolScore,0);
+score6:=IF(iParadiseInterface.Weather_Events=TRUE,Le.evtscore,0);
+score7:=IF(iParadiseInterface.Weather_Injuries=TRUE,Le.injscore,0);
+score8:=IF(iParadiseInterface.Weather_Fatalities=TRUE,Le.fatscore,0);
+//score:=IF (MyInstance=TRUE,Le.StudentTeacherScore,0);
+//SELF.ParadiseScore:=Le.StudentTeacherScore;
+SELF.ParadiseScore:=score1+score2+score3+score4+score5+score6+score7+score8;
+SELF := Le;
+
 
 END;
 
 
+
+
 ParadiseSummary := PROJECT(MergeAll,CompTotal(LEFT));
 
+
 OUTPUT(ParadiseSummary,,'~FYP::Main::Hacks::ParadiseScores',NAMED('Final_Output'),OVERWRITE);
- 
+
